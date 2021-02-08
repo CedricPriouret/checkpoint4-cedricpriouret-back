@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const connection = require("./config");
 const cors = require("cors");
-const { connect } = require("./config");
 const port = 3001;
 
 connection.connect(function (err) {
@@ -29,8 +28,8 @@ app.post("/create", (req, res) => {
   connection.query(
     "INSERT INTO user (firstName, lastName, age, country, mail) VALUES (?, ?, ?, ?, ?)",
     [firstName, lastName, age, country, mail],
-    (err, result) => {
-      if (err) {
+    (err_connection, result) => {
+      if (err_connection) {
         console.log(err);
       } else {
         res.send("Valeur ajouter");
@@ -42,8 +41,8 @@ app.post("/create", (req, res) => {
 /* OBTENIR LA LISTE DES UTILISATEURS */
 
 app.get("/user", (req, res) => {
-  connection.query("SELECT * FROM user", (err, result) => {
-    if (err) {
+  connection.query("SELECT * FROM user", (err_get, result) => {
+    if (err_get) {
       console.log(err);
     } else {
       res.send(result);
@@ -59,9 +58,9 @@ app.put("/update", (req, res) => {
   connection.query(
     "UPDATE user SET country = ? WHERE id = ?",
     [country, id],
-    (err, result) => {
-      if (err) {
-        console.log(err);
+    (err_put, result) => {
+      if (err_put) {
+        console.log(err_put);
       } else {
         res.send(result);
       }
@@ -73,13 +72,17 @@ app.put("/update", (req, res) => {
 
 app.delete("/delete/:id", (req, res) => {
   const id = req.params.id;
-  connection.query("DELETE FROM user WHERE id = ?", id, (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
+  connection.query(
+    "DELETE FROM user WHERE id = ?",
+    id,
+    (err_delete, result) => {
+      if (err_delete) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
     }
-  });
+  );
 });
 
 app.listen(port, () => console.log(`Example app listening on port port!`));
